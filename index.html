@@ -10,16 +10,9 @@
 
 <h1>🌍 Oxygen Guardian</h1>
 
-<p class="instructions">
-Collect oxygen bubbles from trees and clean pollution from factories.
-Higher score increases difficulty.
-</p>
+<div class="layout">
 
-<div class="buttons">
-<button id="startBtn">Start</button>
-<button id="pauseBtn">Pause</button>
-<button id="restartBtn">Restart</button>
-</div>
+<div class="gameArea">
 
 <canvas id="gameCanvas" width="900" height="500"></canvas>
 
@@ -35,8 +28,22 @@ Higher score increases difficulty.
 
 </div>
 
+<div class="buttons">
+<button id="startBtn">Start</button>
+<button id="pauseBtn">Pause</button>
+<button id="restartBtn">Restart</button>
+</div>
+
+</div>
+
+<div class="leaderboardPanel">
+
 <h3>🏆 Leaderboard</h3>
 <ol id="leaderboard"></ol>
+
+</div>
+
+</div>
 
 <script src="game.js"></script>
 
