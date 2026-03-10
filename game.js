@@ -27,7 +27,6 @@ let trees=[];
 let factories=[];
 
 let AQI=50;
-
 let level=1;
 
 let keys={};
@@ -46,13 +45,13 @@ if(keys["ArrowRight"]) player.x+=player.speed;
 
 function updateLevel(){
 
-level = Math.floor(player.score/200)+1;
+level=Math.floor(player.score/500)+1;
 
 }
 
 function spawnWorld(){
 
-if(Math.random()<0.01){
+if(Math.random()<0.003){
 
 trees.push({
 x:canvas.width,
@@ -61,7 +60,7 @@ y:Math.random()*canvas.height
 
 }
 
-if(Math.random()<0.008 + level*0.002){
+if(Math.random()<0.002 + level*0.001){
 
 factories.push({
 x:canvas.width,
@@ -76,13 +75,12 @@ function spawnParticles(){
 
 trees.forEach(t=>{
 
-if(Math.random()<0.03){
+if(Math.random()<0.02){
 
 oxygenParticles.push({
 x:t.x,
 y:t.y,
-size:8,
-pulse:Math.random()*2
+size:8
 });
 
 }
@@ -91,16 +89,15 @@ pulse:Math.random()*2
 
 factories.forEach(f=>{
 
-if(Math.random()<0.04 + level*0.01){
+if(Math.random()<0.015 + level*0.005){
 
 pollution.push({
 x:f.x,
 y:f.y,
-size:12,
-drift:Math.random()*2-1
+size:12
 });
 
-AQI+=1;
+AQI+=0.5;
 
 }
 
@@ -111,15 +108,13 @@ AQI+=1;
 function update(){
 
 movePlayer();
-
 spawnWorld();
 spawnParticles();
 updateLevel();
 
 oxygenParticles.forEach((o,i)=>{
 
-o.x-=2;
-o.pulse+=0.1;
+o.x-=1.8;
 
 let dx=player.x-o.x;
 let dy=player.y-o.y;
@@ -128,7 +123,7 @@ let dist=Math.sqrt(dx*dx+dy*dy);
 if(dist<player.size){
 
 player.oxygen++;
-player.score+=5;
+player.score+=10;
 
 oxygenParticles.splice(i,1);
 
@@ -139,7 +134,6 @@ oxygenParticles.splice(i,1);
 pollution.forEach((p,i)=>{
 
 p.x-=2;
-p.y+=p.drift;
 
 let dx=player.x-p.x;
 let dy=player.y-p.y;
@@ -150,14 +144,14 @@ if(dist<player.size){
 if(player.oxygen>0){
 
 player.oxygen--;
-player.score+=20;
-AQI-=5;
+player.score+=25;
+AQI-=8;
 
 pollution.splice(i,1);
 
 }else{
 
-AQI+=5;
+AQI+=6;
 
 }
 
@@ -170,29 +164,41 @@ factories.forEach(f=>f.x-=1);
 
 }
 
-function draw(){
+function drawTree(x,y){
 
-canvas.style.background=getBackground();
+ctx.fillStyle="#166534";
+
+ctx.beginPath();
+ctx.arc(x+10,y+10,10,0,Math.PI*2);
+ctx.fill();
+
+ctx.fillStyle="#14532d";
+ctx.fillRect(x+8,y+10,4,10);
+
+}
+
+function drawFactory(x,y){
+
+ctx.fillStyle="#374151";
+ctx.fillRect(x,y,30,20);
+
+ctx.fillStyle="#4b5563";
+ctx.fillRect(x+20,y-10,6,10);
+
+}
+
+function draw(){
 
 ctx.clearRect(0,0,canvas.width,canvas.height);
 
-trees.forEach(t=>{
-ctx.fillStyle="green";
-ctx.fillRect(t.x,t.y,20,20);
-});
-
-factories.forEach(f=>{
-ctx.fillStyle="black";
-ctx.fillRect(f.x,f.y,25,25);
-});
+trees.forEach(t=>drawTree(t.x,t.y));
+factories.forEach(f=>drawFactory(f.x,f.y));
 
 oxygenParticles.forEach(o=>{
 
-let pulseSize=o.size+Math.sin(o.pulse)*2;
-
 ctx.fillStyle="#22c55e";
 ctx.beginPath();
-ctx.arc(o.x,o.y,pulseSize,0,Math.PI*2);
+ctx.arc(o.x,o.y,o.size,0,Math.PI*2);
 ctx.fill();
 
 });
@@ -213,16 +219,6 @@ ctx.fill();
 
 }
 
-function getBackground(){
-
-if(AQI<80) return "#38bdf8";
-if(AQI<150) return "#facc15";
-if(AQI<220) return "#fb923c";
-
-return "#ef4444";
-
-}
-
 function updateUI(){
 
 scoreUI.innerText="Score: "+player.score;
@@ -231,40 +227,6 @@ oxygenUI.innerText="Oxygen: "+player.oxygen;
 
 let percent=Math.min(AQI/300*100,100);
 aqiBar.style.width=percent+"%";
-
-}
-
-function saveScore(score){
-
-let scores=JSON.parse(localStorage.getItem("scores")||"[]");
-
-scores.push(score);
-
-scores.sort((a,b)=>b-a);
-
-scores=scores.slice(0,5);
-
-localStorage.setItem("scores",JSON.stringify(scores));
-
-renderLeaderboard();
-
-}
-
-function renderLeaderboard(){
-
-let scores=JSON.parse(localStorage.getItem("scores")||"[]");
-
-const board=document.getElementById("leaderboard");
-
-board.innerHTML="";
-
-scores.forEach(s=>{
-
-let li=document.createElement("li");
-li.innerText=s;
-board.appendChild(li);
-
-});
 
 }
 
@@ -281,15 +243,39 @@ if(AQI>300){
 gameState="gameover";
 saveScore(player.score);
 
-ctx.fillStyle="red";
-ctx.font="40px Arial";
-ctx.fillText("AIR CRISIS!",320,250);
-
 }
 
 }
 
 requestAnimationFrame(gameLoop);
+
+}
+
+function saveScore(score){
+
+let scores=JSON.parse(localStorage.getItem("scores")||"[]");
+
+scores.push(score);
+scores.sort((a,b)=>b-a);
+scores=scores.slice(0,5);
+
+localStorage.setItem("scores",JSON.stringify(scores));
+renderLeaderboard();
+
+}
+
+function renderLeaderboard(){
+
+const board=document.getElementById("leaderboard");
+let scores=JSON.parse(localStorage.getItem("scores")||"[]");
+
+board.innerHTML="";
+
+scores.forEach(s=>{
+let li=document.createElement("li");
+li.innerText=s;
+board.appendChild(li);
+});
 
 }
 
@@ -306,12 +292,7 @@ else if(gameState==="paused") gameState="playing";
 
 };
 
-restartBtn.onclick=()=>{
-
-location.reload();
-
-};
+restartBtn.onclick=()=>location.reload();
 
 renderLeaderboard();
-
 gameLoop();
