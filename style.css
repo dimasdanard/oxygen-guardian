@@ -8,19 +8,11 @@ text-align:center;
 
 }
 
-.menu{
-
-margin-top:20px;
-
-}
-
 .instructions{
-
 max-width:600px;
 margin:auto;
 font-size:14px;
 color:#cbd5f5;
-
 }
 
 .buttons button{
@@ -32,13 +24,6 @@ margin:5px;
 border-radius:8px;
 color:white;
 cursor:pointer;
-transition:0.2s;
-
-}
-
-.buttons button:hover{
-
-transform:scale(1.05);
 
 }
 
@@ -47,7 +32,7 @@ canvas{
 display:block;
 margin:20px auto;
 border-radius:12px;
-box-shadow:0 0 40px rgba(0,200,255,0.5);
+box-shadow:0 0 40px rgba(0,200,255,0.6);
 
 }
 
@@ -57,7 +42,6 @@ width:900px;
 margin:auto;
 display:flex;
 justify-content:space-between;
-align-items:center;
 
 }
 
@@ -67,7 +51,6 @@ width:300px;
 height:12px;
 background:#1e293b;
 border-radius:10px;
-overflow:hidden;
 
 }
 
@@ -76,5 +59,13 @@ overflow:hidden;
 height:100%;
 width:20%;
 background:green;
+
+}
+
+#leaderboard{
+
+max-width:300px;
+margin:auto;
+text-align:left;
 
 }
