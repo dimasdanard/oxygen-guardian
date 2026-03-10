@@ -1,3 +1,5 @@
+window.onload = function(){
+
 const canvas = document.getElementById("gameCanvas")
 const ctx = canvas.getContext("2d")
 
@@ -44,11 +46,9 @@ function spawn(){
 if(Math.random()<0.04){
 
 oxygen.push({
-
 x:canvas.width,
 y:Math.random()*canvas.height,
 size:10
-
 })
 
 }
@@ -56,11 +56,9 @@ size:10
 if(Math.random()<0.025){
 
 pollution.push({
-
 x:canvas.width,
 y:Math.random()*canvas.height,
 size:14
-
 })
 
 }
@@ -108,63 +106,27 @@ pollution.splice(i,1)
 
 }
 
-function drawGlowCircle(x,y,size,color){
+function drawCircle(x,y,size,color){
 
-let g=ctx.createRadialGradient(x,y,0,x,y,size)
-
-g.addColorStop(0,color)
-g.addColorStop(1,"transparent")
-
-ctx.fillStyle=g
-
+ctx.fillStyle=color
 ctx.beginPath()
 ctx.arc(x,y,size,0,Math.PI*2)
 ctx.fill()
 
 }
 
-function drawPlayer(){
+function draw(){
 
-drawGlowCircle(player.x,player.y,player.size+8,"rgba(0,200,255,0.6)")
+ctx.clearRect(0,0,canvas.width,canvas.height)
 
-ctx.fillStyle="#0284c7"
-
-ctx.beginPath()
-
-ctx.arc(player.x,player.y,player.size,0,Math.PI*2)
-
-ctx.fill()
-
-ctx.fillStyle="white"
-
-ctx.fillText("O₂",player.x-7,player.y+4)
-
-}
-
-function drawObjects(){
+drawCircle(player.x,player.y,player.size,"blue")
 
 oxygen.forEach(o=>{
-
-drawGlowCircle(o.x,o.y,o.size+6,"rgba(34,197,94,0.6)")
-
-ctx.fillStyle="#22c55e"
-
-ctx.beginPath()
-ctx.arc(o.x,o.y,o.size,0,Math.PI*2)
-ctx.fill()
-
+drawCircle(o.x,o.y,o.size,"green")
 })
 
 pollution.forEach(p=>{
-
-drawGlowCircle(p.x,p.y,p.size+6,"rgba(100,100,100,0.6)")
-
-ctx.fillStyle="#374151"
-
-ctx.beginPath()
-ctx.arc(p.x,p.y,p.size,0,Math.PI*2)
-ctx.fill()
-
+drawCircle(p.x,p.y,p.size,"gray")
 })
 
 }
@@ -177,37 +139,20 @@ levelUI.innerText="Level: "+player.level
 
 }
 
-function levelSystem(){
-
-if(player.score>150) player.level=2
-if(player.score>350) player.level=3
-if(player.score>700) player.level=4
-
-}
-
 function gameLoop(){
 
 if(!running || paused) return
 
-ctx.clearRect(0,0,canvas.width,canvas.height)
-
 movePlayer()
 spawn()
 update()
-levelSystem()
-
-drawObjects()
-drawPlayer()
-
+draw()
 updateUI()
 
 if(player.health<=0){
 
 running=false
-
-ctx.fillStyle="red"
-ctx.font="40px Arial"
-ctx.fillText("GAME OVER",330,260)
+alert("Game Over")
 
 return
 
@@ -236,5 +181,10 @@ if(!paused) gameLoop()
 restartBtn.onclick=()=>{
 
 location.reload()
+
+}
+
+// gambar awal agar canvas tidak putih
+draw()
 
 }
