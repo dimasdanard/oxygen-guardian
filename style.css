@@ -33,6 +33,7 @@ border-radius:8px;
 color:white;
 cursor:pointer;
 font-size:14px;
+transition:0.2s;
 
 }
 
@@ -47,9 +48,11 @@ canvas{
 
 display:block;
 margin:20px auto;
-border-radius:10px;
+border-radius:12px;
 background:linear-gradient(#38bdf8,#e0f2fe);
-box-shadow:0 0 30px rgba(0,200,255,0.5);
+box-shadow:
+0 0 40px rgba(0,200,255,0.6),
+inset 0 0 20px rgba(255,255,255,0.4);
 
 }
 
