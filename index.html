@@ -1,28 +1,35 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+
 <meta charset="UTF-8">
 <title>Oxygen Guardian</title>
+
 <link rel="stylesheet" href="style.css">
+
 </head>
 
 <body>
 
-<div class="ui-panel">
+<div class="ui">
 
 <h1>🌍 Oxygen Guardian</h1>
 
 <p class="instructions">
-Move the oxygen bubble using arrow keys.
-Collect green oxygen particles to clean the air.
-Avoid gray pollution clouds that reduce air quality.
-Survive as long as possible and protect Earth's atmosphere.
+
+Use arrow keys to move the oxygen spirit.
+Collect oxygen bubbles produced by trees.
+Use oxygen to neutralize pollution from factories.
+Keep the city's air quality healthy.
+
 </p>
 
 <div class="buttons">
+
 <button id="startBtn">Start</button>
 <button id="pauseBtn">Pause</button>
 <button id="restartBtn">Restart</button>
+
 </div>
 
 </div>
@@ -30,9 +37,11 @@ Survive as long as possible and protect Earth's atmosphere.
 <canvas id="gameCanvas" width="900" height="500"></canvas>
 
 <div class="hud">
+
 <div id="score">Score: 0</div>
-<div id="health">Air Quality: 100%</div>
-<div id="level">Level: 1</div>
+<div id="oxygen">Oxygen: 0</div>
+<div id="aqi">AQI: 50 (Good)</div>
+
 </div>
 
 <script src="game.js"></script>
