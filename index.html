@@ -4,32 +4,25 @@
 
 <meta charset="UTF-8">
 <title>Oxygen Guardian</title>
-
 <link rel="stylesheet" href="style.css">
 
 </head>
 
 <body>
 
-<div class="ui">
+<div class="menu">
 
 <h1>🌍 Oxygen Guardian</h1>
 
 <p class="instructions">
-
-Move with Arrow Keys.  
-Collect oxygen produced by trees.  
-Use oxygen to neutralize pollution from factories.  
-Keep the Air Quality Index (AQI) low.
-
+Collect oxygen from trees and clean pollution from factories.
+Protect the city's air quality as long as possible.
 </p>
 
 <div class="buttons">
-
 <button id="startBtn">Start Game</button>
 <button id="pauseBtn">Pause</button>
 <button id="restartBtn">Restart</button>
-
 </div>
 
 </div>
@@ -40,7 +33,12 @@ Keep the Air Quality Index (AQI) low.
 
 <div id="score">Score: 0</div>
 <div id="oxygen">Oxygen: 0</div>
-<div id="aqi">AQI: 50</div>
+
+<div class="aqiContainer">
+<div id="aqiBar"></div>
+</div>
+
+<div id="aqiText">AQI: 50</div>
 
 </div>
 
