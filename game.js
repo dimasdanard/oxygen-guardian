@@ -1,81 +1,68 @@
-const canvas = document.getElementById("gameCanvas");
-const ctx = canvas.getContext("2d");
+const canvas = document.getElementById("gameCanvas")
+const ctx = canvas.getContext("2d")
 
-const scoreText = document.getElementById("score");
-const healthText = document.getElementById("health");
-const levelText = document.getElementById("level");
+const startBtn=document.getElementById("startBtn")
+const pauseBtn=document.getElementById("pauseBtn")
+const restartBtn=document.getElementById("restartBtn")
 
-const startBtn = document.getElementById("startBtn");
-const pauseBtn = document.getElementById("pauseBtn");
-const restartBtn = document.getElementById("restartBtn");
+const scoreUI=document.getElementById("score")
+const healthUI=document.getElementById("health")
+const levelUI=document.getElementById("level")
 
-let running=false;
-let paused=false;
+let running=false
+let paused=false
 
 let player={
 x:150,
 y:250,
-size:20,
+size:22,
 speed:4,
 score:0,
 health:100,
 level:1
-};
+}
 
-let oxygen=[];
-let pollution=[];
-let trees=[];
-let factories=[];
+let oxygen=[]
+let pollution=[]
 
-let keys={};
+let keys={}
 
-document.addEventListener("keydown",e=>{
-keys[e.key]=true;
-});
-
-document.addEventListener("keyup",e=>{
-keys[e.key]=false;
-});
+document.addEventListener("keydown",e=>keys[e.key]=true)
+document.addEventListener("keyup",e=>keys[e.key]=false)
 
 function movePlayer(){
 
-if(keys["ArrowUp"]) player.y-=player.speed;
-if(keys["ArrowDown"]) player.y+=player.speed;
-if(keys["ArrowLeft"]) player.x-=player.speed;
-if(keys["ArrowRight"]) player.x+=player.speed;
+if(keys["ArrowUp"]) player.y-=player.speed
+if(keys["ArrowDown"]) player.y+=player.speed
+if(keys["ArrowLeft"]) player.x-=player.speed
+if(keys["ArrowRight"]) player.x+=player.speed
 
 }
 
 function spawn(){
 
 if(Math.random()<0.04){
+
 oxygen.push({
+
 x:canvas.width,
 y:Math.random()*canvas.height,
 size:10
-});
+
+})
+
 }
 
 if(Math.random()<0.025){
+
 pollution.push({
+
 x:canvas.width,
 y:Math.random()*canvas.height,
-size:15
-});
-}
+size:14
 
-if(Math.random()<0.004){
-trees.push({
-x:canvas.width,
-y:Math.random()*canvas.height
-});
-}
+})
 
-if(Math.random()<0.003){
-factories.push({
-x:canvas.width,
-y:Math.random()*canvas.height
-});
 }
 
 }
@@ -84,173 +71,170 @@ function update(){
 
 oxygen.forEach((o,i)=>{
 
-o.x-=2;
+o.x-=2
 
-let dx=player.x-o.x;
-let dy=player.y-o.y;
-let dist=Math.sqrt(dx*dx+dy*dy);
+let dx=player.x-o.x
+let dy=player.y-o.y
+let dist=Math.sqrt(dx*dx+dy*dy)
 
 if(dist<player.size){
 
-player.score+=10;
-player.size+=0.2;
-oxygen.splice(i,1);
+player.score+=10
+player.size+=0.3
+
+oxygen.splice(i,1)
 
 }
 
-});
+})
 
 pollution.forEach((p,i)=>{
 
-p.x-=3;
+p.x-=3
 
-let dx=player.x-p.x;
-let dy=player.y-p.y;
-let dist=Math.sqrt(dx*dx+dy*dy);
+let dx=player.x-p.x
+let dy=player.y-p.y
+let dist=Math.sqrt(dx*dx+dy*dy)
 
 if(dist<player.size){
 
-player.health-=10;
-pollution.splice(i,1);
+player.health-=10
+
+pollution.splice(i,1)
 
 }
 
-});
-
-trees.forEach(t=>{
-
-t.x-=1.5;
-
-if(Math.random()<0.02){
-
-oxygen.push({
-x:t.x,
-y:t.y,
-size:10
-});
+})
 
 }
 
-});
+function drawGlowCircle(x,y,size,color){
 
-factories.forEach(f=>{
+let g=ctx.createRadialGradient(x,y,0,x,y,size)
 
-f.x-=1.5;
+g.addColorStop(0,color)
+g.addColorStop(1,"transparent")
 
-if(Math.random()<0.03){
+ctx.fillStyle=g
 
-pollution.push({
-x:f.x,
-y:f.y,
-size:15
-});
-
-}
-
-});
+ctx.beginPath()
+ctx.arc(x,y,size,0,Math.PI*2)
+ctx.fill()
 
 }
 
 function drawPlayer(){
 
-ctx.fillStyle="blue";
-ctx.beginPath();
-ctx.arc(player.x,player.y,player.size,0,Math.PI*2);
-ctx.fill();
+drawGlowCircle(player.x,player.y,player.size+8,"rgba(0,200,255,0.6)")
 
-ctx.fillStyle="white";
-ctx.fillText("O₂",player.x-7,player.y+4);
+ctx.fillStyle="#0284c7"
+
+ctx.beginPath()
+
+ctx.arc(player.x,player.y,player.size,0,Math.PI*2)
+
+ctx.fill()
+
+ctx.fillStyle="white"
+
+ctx.fillText("O₂",player.x-7,player.y+4)
 
 }
 
 function drawObjects(){
 
 oxygen.forEach(o=>{
-ctx.fillStyle="green";
-ctx.beginPath();
-ctx.arc(o.x,o.y,o.size,0,Math.PI*2);
-ctx.fill();
-});
+
+drawGlowCircle(o.x,o.y,o.size+6,"rgba(34,197,94,0.6)")
+
+ctx.fillStyle="#22c55e"
+
+ctx.beginPath()
+ctx.arc(o.x,o.y,o.size,0,Math.PI*2)
+ctx.fill()
+
+})
 
 pollution.forEach(p=>{
-ctx.fillStyle="gray";
-ctx.beginPath();
-ctx.arc(p.x,p.y,p.size,0,Math.PI*2);
-ctx.fill();
-});
 
-trees.forEach(t=>{
-ctx.fillStyle="darkgreen";
-ctx.fillRect(t.x,t.y,20,20);
-});
+drawGlowCircle(p.x,p.y,p.size+6,"rgba(100,100,100,0.6)")
 
-factories.forEach(f=>{
-ctx.fillStyle="black";
-ctx.fillRect(f.x,f.y,25,25);
-});
+ctx.fillStyle="#374151"
+
+ctx.beginPath()
+ctx.arc(p.x,p.y,p.size,0,Math.PI*2)
+ctx.fill()
+
+})
 
 }
 
 function updateUI(){
 
-scoreText.innerText="Score: "+player.score;
-healthText.innerText="Air Quality: "+player.health+"%";
-levelText.innerText="Level: "+player.level;
+scoreUI.innerText="Score: "+player.score
+healthUI.innerText="Air Quality: "+player.health+"%"
+levelUI.innerText="Level: "+player.level
 
 }
 
 function levelSystem(){
 
-if(player.score>100) player.level=2;
-if(player.score>250) player.level=3;
-if(player.score>500) player.level=4;
+if(player.score>150) player.level=2
+if(player.score>350) player.level=3
+if(player.score>700) player.level=4
 
 }
 
-function loop(){
+function gameLoop(){
 
-if(!running || paused) return;
+if(!running || paused) return
 
-ctx.clearRect(0,0,canvas.width,canvas.height);
+ctx.clearRect(0,0,canvas.width,canvas.height)
 
-movePlayer();
-spawn();
-update();
-levelSystem();
+movePlayer()
+spawn()
+update()
+levelSystem()
 
-drawObjects();
-drawPlayer();
+drawObjects()
+drawPlayer()
 
-updateUI();
+updateUI()
 
 if(player.health<=0){
 
-running=false;
+running=false
 
-ctx.fillStyle="red";
-ctx.font="40px Arial";
-ctx.fillText("GAME OVER",330,250);
+ctx.fillStyle="red"
+ctx.font="40px Arial"
+ctx.fillText("GAME OVER",330,260)
 
-return;
+return
+
 }
 
-requestAnimationFrame(loop);
+requestAnimationFrame(gameLoop)
 
 }
 
 startBtn.onclick=()=>{
-running=true;
-paused=false;
-loop();
-};
+
+running=true
+paused=false
+gameLoop()
+
+}
 
 pauseBtn.onclick=()=>{
-paused=!paused;
-if(!paused) loop();
-};
+
+paused=!paused
+
+if(!paused) gameLoop()
+
+}
 
 restartBtn.onclick=()=>{
 
-location.reload();
+location.reload()
 
-};
+}
