@@ -8,46 +8,43 @@ text-align:center;
 
 }
 
-.instructions{
-max-width:600px;
+.layout{
+
+display:flex;
+justify-content:center;
+gap:30px;
+max-width:1200px;
 margin:auto;
-font-size:14px;
-color:#cbd5f5;
+
 }
 
-.buttons button{
+.gameArea{
 
-background:linear-gradient(135deg,#22c55e,#4ade80);
-border:none;
-padding:10px 20px;
-margin:5px;
-border-radius:8px;
-color:white;
-cursor:pointer;
+width:900px;
 
 }
 
 canvas{
 
-display:block;
-margin:20px auto;
+width:100%;
+height:auto;
 border-radius:12px;
 box-shadow:0 0 40px rgba(0,200,255,0.6);
+background:#38bdf8;
 
 }
 
 .hud{
 
-width:900px;
-margin:auto;
 display:flex;
 justify-content:space-between;
+margin-top:8px;
 
 }
 
 .aqiContainer{
 
-width:300px;
+width:200px;
 height:12px;
 background:#1e293b;
 border-radius:10px;
@@ -62,10 +59,153 @@ background:green;
 
 }
 
-#leaderboard{
+.buttons{
 
-max-width:300px;
+margin-top:10px;
+
+}
+
+.buttons button{
+
+background:linear-gradient(135deg,#22c55e,#4ade80);
+border:none;
+padding:10px 18px;
+margin:5px;
+border-radius:8px;
+cursor:pointer;
+color:white;
+
+}
+
+.leaderboardPanel{
+
+width:220px;
+background:#111827;
+border-radius:10px;
+padding:10px;
+
+}
+
+/* MOBILE */
+
+@media (max-width:900px){
+
+.layout{
+
+flex-direction:column;
+align-items:center;
+
+}
+
+.leaderboardPanel{
+
+width:90%;
+
+}
+
+}body{
+
+margin:0;
+font-family:Segoe UI;
+background:#0f172a;
+color:white;
+text-align:center;
+
+}
+
+.layout{
+
+display:flex;
+justify-content:center;
+gap:30px;
+max-width:1200px;
 margin:auto;
-text-align:left;
+
+}
+
+.gameArea{
+
+width:900px;
+
+}
+
+canvas{
+
+width:100%;
+height:auto;
+border-radius:12px;
+box-shadow:0 0 40px rgba(0,200,255,0.6);
+background:#38bdf8;
+
+}
+
+.hud{
+
+display:flex;
+justify-content:space-between;
+margin-top:8px;
+
+}
+
+.aqiContainer{
+
+width:200px;
+height:12px;
+background:#1e293b;
+border-radius:10px;
+
+}
+
+#aqiBar{
+
+height:100%;
+width:20%;
+background:green;
+
+}
+
+.buttons{
+
+margin-top:10px;
+
+}
+
+.buttons button{
+
+background:linear-gradient(135deg,#22c55e,#4ade80);
+border:none;
+padding:10px 18px;
+margin:5px;
+border-radius:8px;
+cursor:pointer;
+color:white;
+
+}
+
+.leaderboardPanel{
+
+width:220px;
+background:#111827;
+border-radius:10px;
+padding:10px;
+
+}
+
+/* MOBILE */
+
+@media (max-width:900px){
+
+.layout{
+
+flex-direction:column;
+align-items:center;
+
+}
+
+.leaderboardPanel{
+
+width:90%;
+
+}
 
 }
