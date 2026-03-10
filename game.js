@@ -7,7 +7,8 @@ const restartBtn=document.getElementById("restartBtn");
 
 const scoreUI=document.getElementById("score");
 const oxygenUI=document.getElementById("oxygen");
-const aqiUI=document.getElementById("aqi");
+const aqiText=document.getElementById("aqiText");
+const aqiBar=document.getElementById("aqiBar");
 
 let gameState="menu";
 
@@ -100,7 +101,6 @@ AQI+=1;
 function update(){
 
 movePlayer();
-
 spawnWorld();
 spawnParticles();
 
@@ -157,22 +157,19 @@ factories.forEach(f=>f.x-=1);
 
 }
 
-function drawGlow(x,y,size,color){
+function getBackground(){
 
-let g=ctx.createRadialGradient(x,y,0,x,y,size);
+if(AQI<80) return "#38bdf8";
+if(AQI<150) return "#facc15";
+if(AQI<220) return "#fb923c";
 
-g.addColorStop(0,color);
-g.addColorStop(1,"transparent");
-
-ctx.fillStyle=g;
-
-ctx.beginPath();
-ctx.arc(x,y,size,0,Math.PI*2);
-ctx.fill();
+return "#ef4444";
 
 }
 
 function draw(){
+
+canvas.style.background=getBackground();
 
 ctx.clearRect(0,0,canvas.width,canvas.height);
 
@@ -187,7 +184,6 @@ ctx.fillRect(f.x,f.y,25,25);
 });
 
 oxygenParticles.forEach(o=>{
-drawGlow(o.x,o.y,o.size+6,"rgba(34,197,94,0.7)");
 ctx.fillStyle="#22c55e";
 ctx.beginPath();
 ctx.arc(o.x,o.y,o.size,0,Math.PI*2);
@@ -195,21 +191,16 @@ ctx.fill();
 });
 
 pollution.forEach(p=>{
-drawGlow(p.x,p.y,p.size+8,"rgba(120,120,120,0.6)");
 ctx.fillStyle="#6b7280";
 ctx.beginPath();
 ctx.arc(p.x,p.y,p.size,0,Math.PI*2);
 ctx.fill();
 });
 
-drawGlow(player.x,player.y,player.size+10,"rgba(0,200,255,0.7)");
 ctx.fillStyle="#0284c7";
 ctx.beginPath();
 ctx.arc(player.x,player.y,player.size,0,Math.PI*2);
 ctx.fill();
-
-ctx.fillStyle="white";
-ctx.fillText("O₂",player.x-7,player.y+4);
 
 }
 
@@ -217,7 +208,17 @@ function updateUI(){
 
 scoreUI.innerText="Score: "+player.score;
 oxygenUI.innerText="Oxygen: "+player.oxygen;
-aqiUI.innerText="AQI: "+AQI;
+
+aqiText.innerText="AQI: "+AQI;
+
+let percent=Math.min(AQI/300*100,100);
+
+aqiBar.style.width=percent+"%";
+
+if(AQI<80) aqiBar.style.background="green";
+else if(AQI<150) aqiBar.style.background="yellow";
+else if(AQI<220) aqiBar.style.background="orange";
+else aqiBar.style.background="red";
 
 }
 
@@ -253,11 +254,8 @@ gameState="playing";
 
 pauseBtn.onclick=()=>{
 
-if(gameState==="playing"){
-gameState="paused";
-}else if(gameState==="paused"){
-gameState="playing";
-}
+if(gameState==="playing") gameState="paused";
+else if(gameState==="paused") gameState="playing";
 
 };
 
