@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
 <meta charset="UTF-8">
 <title>Oxygen Guardian</title>
@@ -9,18 +8,19 @@
 
 <body>
 
-<div class="menu">
+<div class="ui-panel">
 
 <h1>🌍 Oxygen Guardian</h1>
 
 <p class="instructions">
-Collect oxygen bubbles to clean the air and avoid pollution clouds.
-Protect Earth's air quality as long as possible.
-Use arrow keys to move.
+Move the oxygen bubble using arrow keys.
+Collect green oxygen particles to clean the air.
+Avoid gray pollution clouds that reduce air quality.
+Survive as long as possible and protect Earth's atmosphere.
 </p>
 
 <div class="buttons">
-<button id="startBtn">Start Game</button>
+<button id="startBtn">Start</button>
 <button id="pauseBtn">Pause</button>
 <button id="restartBtn">Restart</button>
 </div>
@@ -30,9 +30,9 @@ Use arrow keys to move.
 <canvas id="gameCanvas" width="900" height="500"></canvas>
 
 <div class="hud">
-<span id="score">Score: 0</span>
-<span id="health">Air Quality: 100%</span>
-<span id="level">Level: 1</span>
+<div id="score">Score: 0</div>
+<div id="health">Air Quality: 100%</div>
+<div id="level">Level: 1</div>
 </div>
 
 <script src="game.js"></script>
