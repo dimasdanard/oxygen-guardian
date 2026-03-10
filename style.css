@@ -2,25 +2,24 @@ body{
 
 margin:0;
 font-family:Segoe UI,Arial;
-background: radial-gradient(circle at top,#0f172a,#020617);
+background: radial-gradient(circle,#0f172a,#020617);
 color:white;
 text-align:center;
 
 }
 
-.ui-panel{
+.ui{
 
-max-width:700px;
-margin:auto;
 margin-top:20px;
 
 }
 
 .instructions{
 
-color:#cbd5f5;
+max-width:600px;
+margin:auto;
 font-size:14px;
-margin-bottom:10px;
+color:#cbd5f5;
 
 }
 
@@ -28,12 +27,12 @@ margin-bottom:10px;
 
 background:linear-gradient(135deg,#22c55e,#4ade80);
 border:none;
-padding:10px 18px;
+padding:10px 20px;
 margin:5px;
-border-radius:6px;
+border-radius:8px;
 color:white;
 cursor:pointer;
-transition:0.2s;
+font-size:14px;
 
 }
 
@@ -50,7 +49,7 @@ display:block;
 margin:20px auto;
 border-radius:10px;
 background:linear-gradient(#38bdf8,#e0f2fe);
-box-shadow:0 0 30px rgba(0,200,255,0.4);
+box-shadow:0 0 30px rgba(0,200,255,0.5);
 
 }
 
