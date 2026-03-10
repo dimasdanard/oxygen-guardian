@@ -1,14 +1,14 @@
 body{
 
 margin:0;
-font-family:Segoe UI,Arial;
-background: radial-gradient(circle,#0f172a,#020617);
+font-family:Segoe UI;
+background:#0f172a;
 color:white;
 text-align:center;
 
 }
 
-.ui{
+.menu{
 
 margin-top:20px;
 
@@ -32,7 +32,6 @@ margin:5px;
 border-radius:8px;
 color:white;
 cursor:pointer;
-font-size:14px;
 transition:0.2s;
 
 }
@@ -40,7 +39,6 @@ transition:0.2s;
 .buttons button:hover{
 
 transform:scale(1.05);
-background:#16a34a;
 
 }
 
@@ -49,10 +47,7 @@ canvas{
 display:block;
 margin:20px auto;
 border-radius:12px;
-background:linear-gradient(#38bdf8,#e0f2fe);
-box-shadow:
-0 0 40px rgba(0,200,255,0.6),
-inset 0 0 20px rgba(255,255,255,0.4);
+box-shadow:0 0 40px rgba(0,200,255,0.5);
 
 }
 
@@ -62,6 +57,24 @@ width:900px;
 margin:auto;
 display:flex;
 justify-content:space-between;
-font-size:14px;
+align-items:center;
+
+}
+
+.aqiContainer{
+
+width:300px;
+height:12px;
+background:#1e293b;
+border-radius:10px;
+overflow:hidden;
+
+}
+
+#aqiBar{
+
+height:100%;
+width:20%;
+background:green;
 
 }
