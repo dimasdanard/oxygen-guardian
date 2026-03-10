@@ -6,8 +6,8 @@ const pauseBtn = document.getElementById("pauseBtn");
 const restartBtn = document.getElementById("restartBtn");
 
 const scoreUI = document.getElementById("score");
-const healthUI = document.getElementById("health");
-const levelUI = document.getElementById("level");
+const oxygenUI = document.getElementById("oxygen");
+const aqiUI = document.getElementById("aqi");
 
 let running=false;
 let paused=false;
@@ -15,15 +15,19 @@ let paused=false;
 let player={
 x:150,
 y:250,
-size:22,
+size:20,
 speed:4,
 score:0,
-health:100,
-level:1
+oxygen:0
 };
 
-let oxygen=[];
+let oxygenParticles=[];
 let pollution=[];
+let trees=[];
+let factories=[];
+
+let AQI=50;
+
 let keys={};
 
 document.addEventListener("keydown",e=>keys[e.key]=true);
@@ -38,33 +42,70 @@ if(keys["ArrowRight"]) player.x+=player.speed;
 
 }
 
-function spawn(){
+function spawnWorld(){
 
-if(Math.random()<0.05){
+if(Math.random()<0.01){
 
-oxygen.push({
+trees.push({
 x:canvas.width,
-y:Math.random()*canvas.height,
+y:Math.random()*canvas.height
+});
+
+}
+
+if(Math.random()<0.008){
+
+factories.push({
+x:canvas.width,
+y:Math.random()*canvas.height
+});
+
+}
+
+}
+
+function spawnParticles(){
+
+trees.forEach(t=>{
+
+if(Math.random()<0.03){
+
+oxygenParticles.push({
+x:t.x,
+y:t.y,
 size:8
 });
 
 }
 
-if(Math.random()<0.03){
+});
+
+factories.forEach(f=>{
+
+if(Math.random()<0.04){
 
 pollution.push({
-x:canvas.width,
-y:Math.random()*canvas.height,
+x:f.x,
+y:f.y,
 size:12
 });
 
+AQI+=1;
+
 }
+
+});
 
 }
 
 function update(){
 
-oxygen.forEach((o,i)=>{
+movePlayer();
+
+spawnWorld();
+spawnParticles();
+
+oxygenParticles.forEach((o,i)=>{
 
 o.x-=2;
 
@@ -74,9 +115,10 @@ let dist=Math.sqrt(dx*dx+dy*dy);
 
 if(dist<player.size){
 
-player.score+=10;
-player.size+=0.15;
-oxygen.splice(i,1);
+player.oxygen+=1;
+player.score+=5;
+
+oxygenParticles.splice(i,1);
 
 }
 
@@ -84,7 +126,7 @@ oxygen.splice(i,1);
 
 pollution.forEach((p,i)=>{
 
-p.x-=3;
+p.x-=2;
 
 let dx=player.x-p.x;
 let dy=player.y-p.y;
@@ -92,12 +134,26 @@ let dist=Math.sqrt(dx*dx+dy*dy);
 
 if(dist<player.size){
 
-player.health-=10;
+if(player.oxygen>0){
+
+player.oxygen-=1;
+player.score+=15;
+AQI-=5;
+
 pollution.splice(i,1);
+
+}else{
+
+AQI+=5;
+
+}
 
 }
 
 });
+
+trees.forEach(t=>t.x-=1);
+factories.forEach(f=>f.x-=1);
 
 }
 
@@ -108,6 +164,7 @@ g.addColorStop(0,color);
 g.addColorStop(1,"transparent");
 
 ctx.fillStyle=g;
+
 ctx.beginPath();
 ctx.arc(x,y,size,0,Math.PI*2);
 ctx.fill();
@@ -118,7 +175,21 @@ function draw(){
 
 ctx.clearRect(0,0,canvas.width,canvas.height);
 
-oxygen.forEach(o=>{
+trees.forEach(t=>{
+
+ctx.fillStyle="green";
+ctx.fillRect(t.x,t.y,20,20);
+
+});
+
+factories.forEach(f=>{
+
+ctx.fillStyle="black";
+ctx.fillRect(f.x,f.y,25,25);
+
+});
+
+oxygenParticles.forEach(o=>{
 
 drawGlow(o.x,o.y,o.size+6,"rgba(34,197,94,0.6)");
 
@@ -131,7 +202,7 @@ ctx.fill();
 
 pollution.forEach(p=>{
 
-drawGlow(p.x,p.y,p.size+6,"rgba(120,120,120,0.6)");
+drawGlow(p.x,p.y,p.size+8,"rgba(120,120,120,0.6)");
 
 ctx.fillStyle="#6b7280";
 ctx.beginPath();
@@ -140,7 +211,7 @@ ctx.fill();
 
 });
 
-drawGlow(player.x,player.y,player.size+8,"rgba(0,200,255,0.6)");
+drawGlow(player.x,player.y,player.size+10,"rgba(0,200,255,0.6)");
 
 ctx.fillStyle="#0284c7";
 ctx.beginPath();
@@ -155,8 +226,14 @@ ctx.fillText("O₂",player.x-7,player.y+4);
 function updateUI(){
 
 scoreUI.innerText="Score: "+player.score;
-healthUI.innerText="Air Quality: "+player.health+"%";
-levelUI.innerText="Level: "+player.level;
+oxygenUI.innerText="Oxygen: "+player.oxygen;
+
+let status="Good";
+
+if(AQI>100) status="Moderate";
+if(AQI>200) status="Unhealthy";
+
+aqiUI.innerText="AQI: "+AQI+" ("+status+")";
 
 }
 
@@ -164,19 +241,17 @@ function gameLoop(){
 
 if(running && !paused){
 
-movePlayer();
-spawn();
 update();
 draw();
 updateUI();
 
-if(player.health<=0){
+if(AQI>300){
 
 running=false;
 
 ctx.fillStyle="red";
 ctx.font="40px Arial";
-ctx.fillText("GAME OVER",330,260);
+ctx.fillText("AIR CRISIS!",320,250);
 
 }
 
