@@ -1,19 +1,53 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="en">
+
 <head>
 <meta charset="UTF-8">
 <title>Oxygen Guardian</title>
-<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="css/game.css">
 </head>
 
 <body>
 
+<div class="game-wrapper">
+
 <h1>🌍 Oxygen Guardian</h1>
-<p>Kumpulkan oksigen dan hindari polusi!</p>
+
+<div id="menu">
+
+<h2>Protect Earth's Oxygen</h2>
+
+<p class="instructions">
+
+Move your oxygen bubble and collect clean O₂ while avoiding pollution.  
+Trees generate oxygen while factories produce pollution.  
+If the air quality drops to zero, the Earth becomes too polluted!
+
+</p>
+
+<div class="buttons">
+
+<button id="startBtn">Start Game</button>
+<button id="pauseBtn">Pause</button>
+<button id="restartBtn">Restart</button>
+
+</div>
+
+</div>
 
 <canvas id="gameCanvas" width="900" height="500"></canvas>
 
-<script src="game.js"></script>
+<div class="hud">
+
+<span id="score">Score: 0</span>
+<span id="health">Air Quality: 100%</span>
+<span id="level">Level: 1</span>
+
+</div>
+
+</div>
+
+<script src="js/game.js"></script>
 
 </body>
 </html>
