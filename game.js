@@ -15,16 +15,18 @@ let gameState="menu";
 let player={
 x:150,
 y:250,
-size:20,
+size:18,
 speed:4,
 score:0,
-oxygen:0
+oxygen:0,
+stage:1
 };
 
 let oxygenParticles=[];
 let pollution=[];
 let trees=[];
 let factories=[];
+let bubbles=[];
 
 let AQI=50;
 let level=1;
@@ -45,13 +47,21 @@ if(keys["ArrowRight"]) player.x+=player.speed;
 
 function updateLevel(){
 
-level=Math.floor(player.score/500)+1;
+level=Math.floor(player.score/600)+1;
+
+}
+
+function updateEvolution(){
+
+if(player.score>1800) player.stage=4;
+else if(player.score>900) player.stage=3;
+else if(player.score>400) player.stage=2;
 
 }
 
 function spawnWorld(){
 
-if(Math.random()<0.003){
+if(Math.random()<0.002){
 
 trees.push({
 x:canvas.width,
@@ -60,7 +70,7 @@ y:Math.random()*canvas.height
 
 }
 
-if(Math.random()<0.002 + level*0.001){
+if(level>1 && Math.random()<0.001 + level*0.0005){
 
 factories.push({
 x:canvas.width,
@@ -75,7 +85,7 @@ function spawnParticles(){
 
 trees.forEach(t=>{
 
-if(Math.random()<0.02){
+if(Math.random()<0.03){
 
 oxygenParticles.push({
 x:t.x,
@@ -89,7 +99,7 @@ size:8
 
 factories.forEach(f=>{
 
-if(Math.random()<0.015 + level*0.005){
+if(Math.random()<0.01 + level*0.005){
 
 pollution.push({
 x:f.x,
@@ -97,10 +107,21 @@ y:f.y,
 size:12
 });
 
-AQI+=0.5;
+AQI+=0.3;
 
 }
 
+});
+
+}
+
+function createBubble(x,y){
+
+bubbles.push({
+x:x,
+y:y,
+life:20,
+size:Math.random()*4+2
 });
 
 }
@@ -110,11 +131,15 @@ function update(){
 movePlayer();
 spawnWorld();
 spawnParticles();
+
 updateLevel();
+updateEvolution();
+
+createBubble(player.x,player.y);
 
 oxygenParticles.forEach((o,i)=>{
 
-o.x-=1.8;
+o.x-=1.5;
 
 let dx=player.x-o.x;
 let dy=player.y-o.y;
@@ -133,7 +158,7 @@ oxygenParticles.splice(i,1);
 
 pollution.forEach((p,i)=>{
 
-p.x-=2;
+p.x-=1.5;
 
 let dx=player.x-p.x;
 let dy=player.y-p.y;
@@ -144,14 +169,18 @@ if(dist<player.size){
 if(player.oxygen>0){
 
 player.oxygen--;
-player.score+=25;
-AQI-=8;
+
+let power=player.stage*5;
+
+player.score+=20*player.stage;
+
+AQI-=power;
 
 pollution.splice(i,1);
 
 }else{
 
-AQI+=6;
+AQI+=4;
 
 }
 
@@ -159,8 +188,41 @@ AQI+=6;
 
 });
 
-trees.forEach(t=>t.x-=1);
-factories.forEach(f=>f.x-=1);
+bubbles.forEach((b,i)=>{
+
+b.y-=0.5;
+b.life--;
+
+if(b.life<=0) bubbles.splice(i,1);
+
+});
+
+trees.forEach(t=>t.x-=0.8);
+factories.forEach(f=>f.x-=0.8);
+
+}
+
+function drawBubble(x,y,size){
+
+ctx.beginPath();
+ctx.arc(x,y,size,0,Math.PI*2);
+ctx.fillStyle="rgba(34,197,94,0.6)";
+ctx.fill();
+
+}
+
+function drawPlayer(){
+
+let color="#22c55e";
+
+if(player.stage==2) color="#4ade80";
+if(player.stage==3) color="#38bdf8";
+if(player.stage==4) color="#a78bfa";
+
+ctx.beginPath();
+ctx.arc(player.x,player.y,player.size+player.stage*2,0,Math.PI*2);
+ctx.fillStyle=color;
+ctx.fill();
 
 }
 
@@ -182,8 +244,8 @@ function drawFactory(x,y){
 ctx.fillStyle="#374151";
 ctx.fillRect(x,y,30,20);
 
-ctx.fillStyle="#4b5563";
-ctx.fillRect(x+20,y-10,6,10);
+ctx.fillStyle="#6b7280";
+ctx.fillRect(x+22,y-10,6,10);
 
 }
 
@@ -196,26 +258,25 @@ factories.forEach(f=>drawFactory(f.x,f.y));
 
 oxygenParticles.forEach(o=>{
 
-ctx.fillStyle="#22c55e";
 ctx.beginPath();
 ctx.arc(o.x,o.y,o.size,0,Math.PI*2);
+ctx.fillStyle="#22c55e";
 ctx.fill();
 
 });
 
 pollution.forEach(p=>{
 
-ctx.fillStyle="#6b7280";
 ctx.beginPath();
 ctx.arc(p.x,p.y,p.size,0,Math.PI*2);
+ctx.fillStyle="#6b7280";
 ctx.fill();
 
 });
 
-ctx.fillStyle="#0284c7";
-ctx.beginPath();
-ctx.arc(player.x,player.y,player.size,0,Math.PI*2);
-ctx.fill();
+bubbles.forEach(b=>drawBubble(b.x,b.y,b.size));
+
+drawPlayer();
 
 }
 
@@ -267,6 +328,7 @@ renderLeaderboard();
 function renderLeaderboard(){
 
 const board=document.getElementById("leaderboard");
+
 let scores=JSON.parse(localStorage.getItem("scores")||"[]");
 
 board.innerHTML="";
