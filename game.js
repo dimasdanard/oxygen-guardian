@@ -26,7 +26,9 @@ let oxygenParticles=[];
 let pollution=[];
 let trees=[];
 let factories=[];
-let bubbles=[];
+
+let trailParticles=[];
+let smokeParticles=[];
 
 let AQI=50;
 let level=1;
@@ -70,7 +72,7 @@ y:Math.random()*canvas.height
 
 }
 
-if(level>1 && Math.random()<0.001 + level*0.0005){
+if(level>1 && Math.random()<0.001+level*0.0005){
 
 factories.push({
 x:canvas.width,
@@ -99,12 +101,19 @@ size:8
 
 factories.forEach(f=>{
 
-if(Math.random()<0.01 + level*0.005){
+if(Math.random()<0.01+level*0.005){
 
 pollution.push({
 x:f.x,
 y:f.y,
 size:12
+});
+
+smokeParticles.push({
+x:f.x,
+y:f.y,
+life:40,
+size:Math.random()*8+4
 });
 
 AQI+=0.3;
@@ -115,13 +124,14 @@ AQI+=0.3;
 
 }
 
-function createBubble(x,y){
+function spawnTrail(){
 
-bubbles.push({
-x:x,
-y:y,
-life:20,
-size:Math.random()*4+2
+trailParticles.push({
+x:player.x,
+y:player.y,
+life:30,
+size:Math.random()*6+2,
+alpha:1
 });
 
 }
@@ -129,13 +139,14 @@ size:Math.random()*4+2
 function update(){
 
 movePlayer();
+
 spawnWorld();
 spawnParticles();
 
 updateLevel();
 updateEvolution();
 
-createBubble(player.x,player.y);
+spawnTrail();
 
 oxygenParticles.forEach((o,i)=>{
 
@@ -170,11 +181,9 @@ if(player.oxygen>0){
 
 player.oxygen--;
 
-let power=player.stage*5;
-
 player.score+=20*player.stage;
 
-AQI-=power;
+AQI-=5*player.stage;
 
 pollution.splice(i,1);
 
@@ -188,12 +197,22 @@ AQI+=4;
 
 });
 
-bubbles.forEach((b,i)=>{
+trailParticles.forEach((p,i)=>{
 
-b.y-=0.5;
-b.life--;
+p.life--;
+p.alpha-=0.03;
+p.y-=0.3;
 
-if(b.life<=0) bubbles.splice(i,1);
+if(p.life<=0) trailParticles.splice(i,1);
+
+});
+
+smokeParticles.forEach((s,i)=>{
+
+s.y-=0.4;
+s.life--;
+
+if(s.life<=0) smokeParticles.splice(i,1);
 
 });
 
@@ -202,33 +221,36 @@ factories.forEach(f=>f.x-=0.8);
 
 }
 
-function drawBubble(x,y,size){
-
-ctx.beginPath();
-ctx.arc(x,y,size,0,Math.PI*2);
-ctx.fillStyle="rgba(34,197,94,0.6)";
-ctx.fill();
-
-}
-
 function drawPlayer(){
 
-let color="#22c55e";
+let colors=[
+"#22d3ee",
+"#4ade80",
+"#a78bfa",
+"#facc15"
+];
 
-if(player.stage==2) color="#4ade80";
-if(player.stage==3) color="#38bdf8";
-if(player.stage==4) color="#a78bfa";
+let color=colors[player.stage-1];
+
+ctx.shadowBlur=20;
+ctx.shadowColor=color;
 
 ctx.beginPath();
 ctx.arc(player.x,player.y,player.size+player.stage*2,0,Math.PI*2);
 ctx.fillStyle=color;
 ctx.fill();
 
+ctx.shadowBlur=0;
+
+ctx.lineWidth=3;
+ctx.strokeStyle="#ffffff";
+ctx.stroke();
+
 }
 
 function drawTree(x,y){
 
-ctx.fillStyle="#166534";
+ctx.fillStyle="#16a34a";
 
 ctx.beginPath();
 ctx.arc(x+10,y+10,10,0,Math.PI*2);
@@ -258,10 +280,15 @@ factories.forEach(f=>drawFactory(f.x,f.y));
 
 oxygenParticles.forEach(o=>{
 
+ctx.shadowBlur=15;
+ctx.shadowColor="#22c55e";
+
 ctx.beginPath();
 ctx.arc(o.x,o.y,o.size,0,Math.PI*2);
-ctx.fillStyle="#22c55e";
+ctx.fillStyle="#4ade80";
 ctx.fill();
+
+ctx.shadowBlur=0;
 
 });
 
@@ -274,7 +301,25 @@ ctx.fill();
 
 });
 
-bubbles.forEach(b=>drawBubble(b.x,b.y,b.size));
+trailParticles.forEach(p=>{
+
+ctx.beginPath();
+ctx.arc(p.x,p.y,p.size,0,Math.PI*2);
+
+ctx.fillStyle="rgba(255,255,255,"+p.alpha+")";
+ctx.fill();
+
+});
+
+smokeParticles.forEach(s=>{
+
+ctx.beginPath();
+ctx.arc(s.x,s.y,s.size,0,Math.PI*2);
+
+ctx.fillStyle="rgba(120,120,120,0.3)";
+ctx.fill();
+
+});
 
 drawPlayer();
 
@@ -287,6 +332,7 @@ levelUI.innerText="Level: "+level;
 oxygenUI.innerText="Oxygen: "+player.oxygen;
 
 let percent=Math.min(AQI/300*100,100);
+
 aqiBar.style.width=percent+"%";
 
 }
@@ -302,6 +348,7 @@ updateUI();
 if(AQI>300){
 
 gameState="gameover";
+
 saveScore(player.score);
 
 }
@@ -317,10 +364,13 @@ function saveScore(score){
 let scores=JSON.parse(localStorage.getItem("scores")||"[]");
 
 scores.push(score);
+
 scores.sort((a,b)=>b-a);
+
 scores=scores.slice(0,5);
 
 localStorage.setItem("scores",JSON.stringify(scores));
+
 renderLeaderboard();
 
 }
@@ -334,9 +384,12 @@ let scores=JSON.parse(localStorage.getItem("scores")||"[]");
 board.innerHTML="";
 
 scores.forEach(s=>{
+
 let li=document.createElement("li");
 li.innerText=s;
+
 board.appendChild(li);
+
 });
 
 }
@@ -357,4 +410,5 @@ else if(gameState==="paused") gameState="playing";
 restartBtn.onclick=()=>location.reload();
 
 renderLeaderboard();
+
 gameLoop();
